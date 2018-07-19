@@ -1,0 +1,41 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">  
+<link rel="stylesheet" href="http://localhost/arcgis_js_api/library/4.7/esri/css/main.css">  
+<script src="http://localhost/arcgis_js_api/library/4.7/init.js"></script>  
+<title>create a map</title>  
+<style>  
+    html,  
+    body,  
+    #viewDiv {  
+      padding: 0;  
+      margin: 0;  
+      background-color: #000000;
+      height: 100%;  
+      width: 100%;  
+    }  
+</style>  
+<script>  
+    require([  
+      "esri/Map",  
+      "esri/views/MapView",  
+      "dojo/domReady!"  // !待DOM渲染完成在执行后面的代码
+    ], function(Map, MapView) {  
+      var map = new Map({  
+        basemap: "streets"  
+      });  
+      var view = new MapView({  
+        container: "viewDiv",  
+        map: map,  
+        zoom: 4,  
+        center: [15, 65]  
+      });  
+    });  
+</script>  
+</head>  
+<body>  
+<div id="viewDiv"></div>  
+</body>  
+</html>  
