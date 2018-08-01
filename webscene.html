@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Load a basic web Scene</title>
+	<meta name="viewport" content="maximum-scale=1, initial-scale=1, user-scalable=no">
+
+	<link rel="stylesheet" href="http://localhost/arcgis_js_api/library/4.7/esri/css/main.css">  
+	<script src="http://localhost/arcgis_js_api/library/4.7/init.js"></script>  
+	<style>
+		html, body, #viewDiv{
+			padding: 0;
+			margin: 0;
+			height: 100%;
+			width: 100%;
+		}
+		#titleDiv{
+			background-color: lightgray;
+			color: black;
+			padding: 5px;
+			position: absolute;
+			z-index: 2;
+			top: 0;
+			right: 0; 
+			font-size: 20pt;
+			font-weight: bolder;
+			width: 100%;
+			height: 30px;
+			text-align: center;
+			opacity: 0.75;
+		}
+	</style>
+	<script>
+		require([
+			"esri/views/SceneView",
+			"esri/WebScene",
+			"dojo/dom",
+			"dojo/domReady!"
+			],function(SceneView, WebScene,dom){
+				var titleDiv = dom.byId("titleDiv");
+				var scene = new WebScene({
+					portalItem: {
+						id:"3a9976baef9240ab8645ee25c7e9c096"
+					}
+				});
+				var view = new SceneView({
+					container: "viewDiv",
+					map: scene,
+					padding: {
+						top: 40
+					}
+				});
+				console.log(scene)
+				console.log(view)
+				console.log(123)
+				view.when(function(){
+					var title = scene.portalItem.title;
+					titleDiv.innerHTML = title
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="viewDiv">
+			<div id="titleDiv">Winter Sun Exposure</div>
+		</div>
+	</body>
+	</html>

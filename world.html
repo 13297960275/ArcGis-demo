@@ -7,7 +7,7 @@
   <style>
     html,
     body,
-    #viewDiv {
+    #MapView, #SceneView {
       padding: 0;
       margin: 0;
       height: 100%;
@@ -15,22 +15,45 @@
     }
   </style>
 
-	<link rel="stylesheet" href="http://localhost/arcgis_js_api/library/4.7/esri/css/main.css">  
-	<script src="http://localhost/arcgis_js_api/library/4.7/init.js"></script>  
+  <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/4.7/esri/css/main.css">  
+  <script src="http://localhost/arcgis_js_api/library/4.7/init.js"></script>  
   <script>
     require([
       "esri/Map",
+      "esri/views/MapView",  
       "esri/views/SceneView",
       "dojo/domReady!"
-    ], function(Map, SceneView) {
+      ], function(Map, MapView, SceneView) {
 
       var map = new Map({
-        basemap: "streets",
-        ground: "world-elevation"
+        basemap: "streets", // 地图指定的底图。它的值为streets/satellite/hybrid/topo/gray/dark-gray/oceans/national-geographic/terrain/osm/dark-gray-vector/gray-vector/streets-vector/topo-vector/streets-night-vector/streets-relief-vector/streets-navigation-vector；可自定义
+        ground: "world-elevation", // 地图指定的表面特性，3D视图时生效，它的值可以是Ground类的一个实例或者是使用世界海拔服务的默认ground实例的world-elevation字符串
+
+        // layers: // 可操作的图层的集合。它的值为FeatureLayers/WebTileLayers/GraphicsLayers
       });
 
-      var view = new SceneView({
-        container: "viewDiv",
+      /**
+        * BaseMap
+Basemap用于创建自定义底图。这些底图可以从自己服务器发布瓦片服务或者由第三方发布的瓦片服务中创建。
+
+Ground
+Ground类包含特定地表如何在SceneView中显示的属性。它包含一个图层属性，是一个ElevationLayer集合，用于定义地图表面的高程或地形。
+
+TileLayer
+TileLayer允许您使用ArcGIS Server REST API公开的缓存地图服务，并将其作为图块层添加到Map中。缓存的服务从缓存中访问切片，而不是动态地渲染图像。由于它们被缓存，平铺图层渲染比MapImageLayers更快。要创建TileLayer的实例，必须引用缓存地图服务的URL。
+*/
+
+      var MapView = new MapView({  // 2D
+        container: "MapView",   // 装载这个视图的容器。
+        map: map,               // 视图渲染的Map对象的实例。
+        zoom: 4,                // 视图中缩放比例。
+        center: [15, 65],       // 视图的中心点。
+
+        // scale: 50000000         // 视图中的地图比例尺。
+      });       
+
+      var SceneView = new SceneView({ // 3D
+        container: "SceneView",
         map: map,
         scale: 50000000,
         center: [-101.17, 21.78]
@@ -41,8 +64,8 @@
 </head>
 
 <body>
-  <div id="viewDiv"></div>
+  <div id="MapView"></div>
+  <div id="SceneView"></div>
+  <div style="width: 33vw; height: 100%; background-color: transparent; position: absolute; left: 0; top: 0; color: #0094ff;">Hello Worde!</div>
 </body>
 </html>
-
-再试试我

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="maximum-scale=1, initial-scale=1, user-scalable=no">
+    <title>Tntro to Popups - 4.6</title>
+    <style>
+        html,body,#viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100% 
+        }
+        #instruction {
+            z-index: 99;
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            padding: 5px;
+            margin-left: -175px;
+            height: 20px;
+            width: 415px;
+            background: rgba(25, 25, 25, 0.8);
+            color: white;
+        }
+    </style>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/4.7/esri/css/main.css">  
+	<script src="http://localhost/arcgis_js_api/library/4.7/init.js"></script> 
+    <script>
+        require([
+        "esri/tasks/Locator",
+        "esri/Map",
+        "esri/views/MapView",
+        "dojo/domReady!"
+        ],function(Locator,Map, MapView){
+            var locatorTask = new Locator({
+                url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
+            });
+            var map = new Map ({
+                basemap: "streets-navigation-vector"
+            });
+            var view = new MapView({
+                map: map,
+                container: viewDiv,
+                center :[-116.3031, 43.6088],
+                zoom: 12
+            });
+            view.on("click",function(event){
+                //MapView的Click方法属性stopPropagation
+                //By default the click event will close the view's popup if the clicked
+                //location doesn't intersect a feature containing a PopupTemplate.
+                //If calling view.popup.open() to display custom content in the popup, 
+                //you should call event.stopPropagation() on the click event object to disable this default behavior. 
+                //This ensures the popup will remain open or open with new custom content when the user clicks other locations in the view.
+                event.stopPropagation();
+                console.log(event)
+                //MapView的Click方法属性mapPoint可以知道在地图的空间参考中点击视图上的点位置。
+                var lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
+                var lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
+                view.popup.open({
+                    title: "Reverse geocode: [" + lon +","+ lat +"]",
+                    location: event.mapPoint
+                });
+                locatorTask.locationToAddress(event.mapPoint).then(function(response){
+                    console.log(response);
+                    view.popup.content = response.address;
+                }).otherwise(function(err) {
+                    view.popup.content = "No address was found for this lacation";
+                });
+            });
+        });    
+    </script> 
+</head>
+<body>
+    <div id="viewDiv"></div>
+    <div id="instruction">Click any location on the map to see its street address</div>
+</body>
+</html>

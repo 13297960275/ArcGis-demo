@@ -1,0 +1,78 @@
+基础术语解释
+Map
+Map类包含储存、管理和覆盖2D3D视图共有图层的属性和方法。使用new Map()方法创建的地图只有通过MapView(2D视图)或者SceneView(3D视图)才能被渲染到界面上，而且一个地图可以被多个视图引用。Map实例是2D视图和3D视图的必要成分，因此Map对像应该在View之前创建。
+
+三个Demon中用到的属性
+
+basemap: 地图指定的底图。它的值为streets/satellite/hybrid/topo/gray/dark-gray/oceans/national-geographic/terrain/osm/dark-gray-vector/gray-vector/streets-vector/topo-vector/streets-night-vector/streets-relief-vector/streets-navigation-vector
+
+ground：地图指定的表面特性。只有在把地图添加到3D视图上的时候，这个特性才是有用的。它的值可以是Ground类的一个实例或者是使用世界海拔服务的默认ground实例的world-elevation字符串。
+
+layers: 可操作的图层的集合。它的值为FeatureLayers/WebTileLayers/GraphicsLayers
+
+View
+View（视图）提供查看及与地图组件交互的方法。地图仅仅是一个容器，存储了包含在基础层和操作层中的地理信息。视图渲染了地图和该地图的各个图层，以便用户能够看到他们。view是基类，它包含两个子类MapView和SceneView。创建视图时必须使用MapView类和SceneView类。
+
+MapView
+MapView是显示一个地图的2D视图。为了使用户能看到文档中的地图，必须创建一个MapView，并且要设置它的两个属性，container和map（SceneView同理）。
+
+三个Demon中用到的属性
+
+center：视图的中心点。
+
+container：装载这个视图的容器。
+
+map：视图渲染的Map对象的实例。
+
+scale: 视图中的地图比例尺。
+
+zoom：视图中缩放比例。
+
+三个Demon中用到的方法
+
+goTo(target, options)将视图设置为给定的目标。
+
+on(type，modifiersOrHandler，handler)在实例上注册一个事件处理程序。调用这个方法来作为监听器监听事件。type：要监听的事件或者事件的名称。modifiersOrHandler：附加的修饰键用于过滤事件。如果不需要修饰符，则在触发事件时调用该函数。handler：修饰符被触发时调用的函数。
+
+SceneView
+SceneView类采用WebGL显示Map或者MapScene实例的3D视图。
+
+三个Demon中用到的属性
+
+center：视图的中心点。
+
+container：装载这个视图的容器。
+
+map：视图渲染的Map或者WebScene对象的实例。
+
+scale: 视图中的地图比例尺。
+
+zoom：视图中地图的缩放比例。
+
+BaseMap
+Basemap用于创建自定义底图。这些底图可以从自己服务器发布瓦片服务或者由第三方发布的瓦片服务中创建。
+
+Ground
+Ground类包含特定地表如何在SceneView中显示的属性。它包含一个图层属性，是一个ElevationLayer集合，用于定义地图表面的高程或地形。
+
+TileLayer
+TileLayer允许您使用ArcGIS Server REST API公开的缓存地图服务，并将其作为图块层添加到Map中。缓存的服务从缓存中访问切片，而不是动态地渲染图像。由于它们被缓存，平铺图层渲染比MapImageLayers更快。要创建TileLayer的实例，必须引用缓存地图服务的URL。
+
+三个Demon中用到的属性
+
+Id：图层独一无二的ID。
+
+opacity：图层的透明度。
+
+URL：图层的REST端点的URL。URL可以指向 ArcGIS for Server, Portal for ArcGIS或者 ArcGIS Online上的资源。
+
+visible：这个图层在视图中是否可见，默认值是true。
+
+Layer
+图层是Map最基本的组成部分。它是以矢量图形或光栅图像的形式表示真实世界现象的空间数据的集合。图层可能包含存储矢量数据的离散特征或存储栅格数据的连续像元/像素。要创建图层，您必须使用Layer的其中一个子类或调用Layer.fromPortalItem（）方法。为了可视化和分析的目的，可以将多个图层添加到相同的地图上并且彼此重叠
+
+三个Demon中用到的方法
+
+when(callback, errback, progback)
+
+一旦创建了类的实例，就可以利用when()。这个方法有两个输入参数：一个callback函数和一个errback函数。allback在承诺解决时执行，如果承诺失败，执行errback。

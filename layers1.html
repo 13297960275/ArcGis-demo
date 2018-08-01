@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Feature masking with SceneLayer - 4.6</title>
+	<link rel="stylesheet" href="http://localhost/arcgis_js_api/library/4.7/esri/css/main.css">
+	<script src="http://localhost/arcgis_js_api/library/4.7/dojo/dojo.js"></script>
+	<style>
+		html, body, #viewDiv {
+			padding: 0;
+			margin: 0;
+			height: 100%;
+			width: 100%;
+		}
+		#clear {
+			position: absolute;
+			top: 0px;
+			right: 0px;
+			width: 200px;
+			background-color: rgba(255, 255, 255, 0.8);
+			padding: 10px;
+			text-align: center;
+		}
+	</style>
+	<script>
+		require(["esri/WebScene", "esri/views/SceneView", "esri/layers/SceneLayer", "dojo/dom", "dojo/domReady!"
+			],function(WebScene, SceneView, SceneLayer, dom){
+				var webscene = new WebScene({
+					portalItem: {
+						id: "10ede348e4c54c77b45f6ebab2d018db"
+					}
+				});
+				var view = new SceneView({
+					map: webscene,
+					container: "viewDiv",
+				});
+				webscene.when(function(){//scenelayer中包含了所有layer.title等于Buildings的layer
+					var scenelayer = webscene.layers.find(function(layer){
+						return layer.title === "Buildings"
+					});
+					var hiddenBuildings = [];
+					view.on("click", function(event){
+						view.hitTest(event).then(function(response){
+							console.log(response)
+							var graphic = response.results[0].graphic;
+							console.log(graphic);
+							if(graphic && graphic.layer.title === "Buildings"){
+								hideBuilding(graphic.attributes.OBJECTID)
+							}
+						})
+					});
+					dom.byId("clear").addEventListener("click", function(){
+						hiddenBuildings = [];
+						scenelayer.definitionExpression = ""
+					});
+					function hideBuilding(id){
+						hiddenBuildings.push(id);
+						scenelayer.definitionExpression = "OBJECTID NOT IN (" + 
+						hiddenBuildings.join(",") + ")"
+					}
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="viewDiv"></div>
+		<div id="clear">
+			<p>Click on a building to mask it.</p>
+			<button>Clear masking</button>
+		</div>
+	</body>
+	</html>

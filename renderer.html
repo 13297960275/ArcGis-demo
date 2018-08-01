@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximun-scale=1, initial-scale=1.0,user-scalable=no">
+    <title>Create a local Scene - 4.6</title>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/4.7/esri/css/main.css">
+    <script src="http://localhost/arcgis_js_api/library/4.7/dojo/dojo.js"></script>
+    <style>
+        html,body,#viewDiv{
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+        #homeDiv{
+            left: 15px;
+            top: 130px;
+            position: absolute;
+            z-index: 35;
+        }
+    </style>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/SceneView",
+            "esri/layers/FeatureLayer",
+            "esri/widgets/Home",
+            "dojo/domReady!"
+        ],function(
+            Map,SceneView,FeatureLayer,Home
+        ){
+            var wellsUrl = 
+            "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/HarperSumnerOGWells/FeatureServer/0";
+            var quakesUrl = 
+            "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/ks_earthquakes_since_2000/FeatureServer/0";
+            var kansasExtent = {
+              xmax: -10834217,
+              xmin: -10932882,
+              ymax: 4493918,
+              ymin: 4432667,
+              spatialReference: { 
+                  wkid: 3857 
+                }
+            };
+            var wellsTemplate = {
+                title: "WELL",
+                content: "<b>API No.:</b> {API_NUMBER}<br>"+
+                         "<b>Lease: </b> {LEASE}</br>"+
+                         "<b>Operator: </b> {CURR_OPERATOR} km<br>"+
+                         "<b>Drilled: </b> {SPUD}<br>"+
+                         "<b>Completed:</b> {COMPLETION}<br>"+
+                         "<b>Status: </b>{STATUS2}<br>"+
+                         "<b> Depth: </b>{DEPTH} meters<br>",
+                //用于定义数据集中的字段或Arcade表达式中的值如何参与弹出窗口
+                fieldInfos: [{
+                    fieldName: "SPUD",
+                    //格式
+                    format: {
+                        dateFormat: "short-date"
+                    }
+                }, {
+                    fieldName: "COMPLETION",
+                    format:{
+                        dateFormat: "short-date"
+                    }
+                }, {
+                    fieldName: "DEPTH",
+                    format: {
+                        //小数位数
+                        places: 0,
+                        //数字分隔符
+                        digitSeparator: true
+                    }
+                }]
+            };
+            var wellsSurfaceRenderer = {
+                type: "simple",
+                symbol: {
+                    type: "point-3d",
+                    //用于可视化图形或特征的Symbol3DLayer对象的集合
+                    symbolLayers: [{
+                        type: "icon",
+                        material: {
+                            color: "#785226"
+                        },
+                        resource: {
+                            primitive: "x"
+                        },
+                        size: 4
+                    }]
+                }
+            };
+            //日期的格式 EEE MMM dd HH：mm：ss zzz yyyy。GMT表示格林威治标准时间。
+            //0700表示标准时减去7小时的时区时间。其中0800表示北京时间。
+            var startDate = new Date("Thu Jul 25 2013 00:00:00 GMT-0700 (PDT)");
+            var endDate = new Date("Mon Nov 09 2015 00:01:40 GMT-0800 (PST)");
+            var wellsDepthRenderer = {
+                type: "simple",
+                symbol:{
+                    type: "point-3d",
+                    symbolLayers: [{
+                        type: "object",
+                        resource: {
+                            primitive: "cylinder"
+                        },
+                        anchor: "top",
+                        width: 50
+                    }]
+                },
+                visualVariables: [{
+                    type: "size",
+                    field: "DEPTH",
+                    axis: "height",
+                    valueUnit: "feet"
+                },{
+                    type: "size",
+                    axis: "width",
+                    useSymbolValue: true
+                },{
+                    type: "color",
+                    field: "SPUD",
+                    stops: [{
+                        value: startDate.valueOf(),
+                        color:"white"
+                    },{
+                        value: endDate.valueOf(),
+                        color: "red"
+                    }]
+                }]               
+            };
+            var wellsLyr = new FeatureLayer({
+                url: wellsUrl,
+                definitionExpression: "Status = 'CBM' OR Status = 'ERO' OR Status = 'GAS' OR Status = 'INJ' OR Status = 'O&G' OR Status = 'OIL' OR Status = 'SWD'",
+                outFields: ["*"],
+                popupTemplate: wellsTemplate,
+                renderer: wellsDepthRenderer,
+                elevationInfo: {
+                    mode: "relative-to-ground",
+                    offset: -100
+                }
+            });
+            var wellsSurfaceLyr = new FeatureLayer({
+                url: wellsUrl,
+                definitionExpression: "Status = 'CBM' OR Status = 'EDR' OR Status = 'GAS' OR Status = 'INJ' OR Status = 'O&G' OR Status = 'OIL' OR Status = 'SWD'",
+                outfields: ["*"],
+                popupTemplate: wellsTemplate,
+                renderer: wellsSurfaceRenderer,
+                elevationInfo: {
+                    mode: "on-the-ground",
+                }
+            });
+            var quakesRenderer = {
+                type: "simple",
+                symbol: {
+                    type: "point-3d",
+                    symbolLayers: [{
+                        type: "object",
+                        resource: {
+                            primitive: "sphere"
+                        }
+                    }]
+                },
+                visualVariables: [{
+                    type: "color",
+                    field: "date_evt",
+                    stops: [{
+                        value: startDate.valueOf(),
+                        color:"white"
+                    },{
+                        value: endDate.valueOf(),
+                        color: "red"
+                    }]
+                }, {
+                    type: "size",
+                    field: "mag",
+                    axis: "all",
+                    stops: [
+                        {
+                            value: 2,
+                            size: 100
+                        },
+                        {
+                            value: 5,
+                            size: 2000
+                        }]
+                }]
+            };
+            var surfaceSym = {
+                type: "point-3d",
+                symbolLayers: [{
+                    type: "icon",
+                    material: {
+                        color: [179, 75, 75]
+                    },
+                    resource: {
+                        primitive: "circle"
+                    }
+                }]
+            };
+            var quakesSurfaceRenderer = {
+                type: "simple",
+                symbol: surfaceSym,
+                visualVariables: [{
+                    type: "size",
+                    field: "mag",
+                    axis: "all",
+                    stops: [
+                        {
+                            value: 2,
+                            size: 3
+                        },
+                        {
+                            value: 5,
+                            size: 50
+                        }]
+                }]
+            };
+            var quakeTemplate = {
+                title: "{place}",
+                content: "<b>Date and time:</b> {date_evt}<br>"+
+                "<b>Magnitude (0-10): </b> {mag}<br>" +
+                "<b>Depth: </b> {depth}<br>",
+                fieldInfos: [{
+                    fieldName: "date_evt",
+                    format: {
+                        dateFormat: "short-date-short-time"
+                    }
+                }],
+                actions: [{
+                    id: "find-wells",
+                    title: "Nearby wells",
+                    className: "esri-icon-notice-round"
+                }]
+            };
+            var quakesDepthLyr = new FeatureLayer({
+                url: quakesUrl,
+                definitionExpression: "mag >= 2",
+                outFields: ["*"],
+                renderer: quakesRenderer,
+                popupTemplate: quakeTemplate,
+                //当为true时，地物自动放置在合适位置
+                returnZ: true,
+                elevationInfo: {
+                    mode: "relative-to-ground"
+                }
+            });
+            var quakesSurfaceLyr = new FeatureLayer({
+                url: quakesUrl,
+                definitionExpression: "mag >= 2",
+                outFields: ["*"],
+                renderer: quakesSurfaceRenderer,
+                popupTemplate: quakeTemplate,
+                opacity: 0.6,
+                elevationInfo: {
+                    mode: "on-the-ground"
+                }
+            });
+            var map = new Map({
+                basemap: "topo",
+                layers: [quakesDepthLyr,quakesSurfaceLyr,wellsLyr,wellsSurfaceLyr]
+            });
+            var view = new SceneView({
+                container: "viewDiv",
+                map: map,
+                viewingMode: "local",
+                clippingArea: kansasExtent,
+                extent: kansasExtent,
+                constraints: {
+                    collision: {
+                        enabled: false
+                    },
+                    tilt: {
+                        max: 179.99
+                    }
+                },
+                environment: {
+                    atmosphere: null,
+                    starsEnabled: false
+                }
+            });
+            //注意：这不是JS API中的类，只是储存查询事件需要属性的对象。
+            var wellsBufferParams = {
+                spatialRelationship: "esriSpatialRelIntersects",
+                distance: 10,
+                units: "kilometers",
+                where: "Status = 'CBM' OR Status = 'EDR' OR Status = 'GAS' OR Status = 'INJ' OR Status = 'O&G' OR Status = 'OIL' OR Status = 'SWD'"
+            };
+            view.popup.on("trigger-action", function(event){
+                //console.log(event)
+                if(event.action.id === "find-wells") {
+                    //传递选中的位置
+                    wellsBufferParams.geometry = view.popup.selectedFeature.geometry;
+                    console.log(wellsBufferParams.geometry);
+                    //对要素服务执行查询并返回满足查询的要素数量。
+                    wellsLyr.queryFeatureCount(wellsBufferParams).then(function(response){
+                        var results = "<b>"+ response + 
+                        "</b>active wells are within 10 km of this earthquake.";
+                        view.popup.content = results;
+                    }).otherwise(
+                        function(err) {
+                            console.log("action failed: ", err);
+                        });
+                } else {return;}
+            });
+            var homeBtn = new Home({
+                view: view
+            },"homeDiv");
+        });   
+    </script>
+</head>
+<body>
+   <div id="viewDiv"></div>
+   <div id="homeDiv"></div>
+</body>
+</html>
