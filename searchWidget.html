@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Search Widget - 4.7</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+	<link rel="stylesheet" href="http://localhost/arcgis_js_api/library/4.7/esri/css/main.css">  
+	<script src="http://localhost/arcgis_js_api/library/4.7/init.js"></script>  
+
+  <script>
+    require([
+    	"esri/tasks/Locator",
+    	"esri/Map",
+    	"esri/views/SceneView",
+    	"esri/widgets/Search",
+    	"dojo/domReady!"
+    ], function(
+    	Locator,
+    	Map,
+    	SceneView,
+    	Search) {
+    	var locatorTask = new Locator({
+    		url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
+    	});
+
+    	var map = new Map({
+    		basemap: "streets",
+    		ground: "world-elevation"
+    	});
+
+    	var view = new SceneView({
+    		container: "viewDiv",
+    		map: map,
+    		camera: {
+    			position: {
+    				x: 13055706.78785175,
+    				y: 3736032.2183589446,
+    				z: 7445.421825966798,
+    				spatialReference: {
+    					wkid: 3857
+    				}
+    			},
+    			heading: 0,
+    			tilt: 46
+    		}
+    	});
+
+    	var searchWidget = new Search({
+    		view: view
+    	});
+
+    	var xyz = []
+
+    	// Add the search widget to the top right corner of the view
+    	view.ui.add(searchWidget, {
+    		position: "top-right"
+    	});
+
+
+    	view.on("click", function(event) {
+    		//MapView的Click方法属性stopPropagation
+    		//By default the click event will close the view's popup if the clicked
+    		//location doesn't intersect a feature containing a PopupTemplate.
+    		//If calling view.popup.open() to display custom content in the popup, 
+    		//you should call event.stopPropagation() on the click event object to disable this default behavior. 
+    		//This ensures the popup will remain open or open with new custom content when the user clicks other locations in the view.
+    		event.stopPropagation();
+    		// console.log(view.camera)
+    		var position = {
+    			x: view.camera.position.x,
+    			y: view.camera.position.y,
+    			z: view.camera.position.z
+    		}
+    		xyz.push(position)
+    		console.log(xyz)
+    		//MapView的Click方法属性mapPoint可以知道在地图的空间参考中点击视图上的点位置。
+    		var lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
+    		var lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
+    		view.popup.open({
+    			title: "Reverse geocode: [" + lon + "," + lat + "]",
+    			location: event.mapPoint
+    		});
+    		locatorTask.locationToAddress(event.mapPoint).then(function(response) {
+    			// console.log(response);
+    			view.popup.content = response.address;
+    		}).otherwise(function(err) {
+    			view.popup.content = "No address was found for this lacation";
+    		});
+
+    		var cam = view.camera.clone();
+
+    		cam = {
+				position: {
+					x: -100.23, // lon
+					y: 65, // lat
+					z: 10000, // elevation in meters
+				},
+
+				heading: 180, // facing due south
+				tilt: 45 // bird's eye view
+			};
+
+			view.goTo(cam);
+
+    	});
+
+    	function lglt2xyz(longitude,latitude,radius){
+		    var lg = degToRad(longitude) , lt = degToRad(latitude);
+		    var y = radius * Math.sin(lt);
+		    var temp = radius * Math.cos(lt);
+		    var x = temp * Math.sin(lg);
+		    var z = temp * Math.cos(lg);
+		    // console.log(x+","+y+","+z);
+		    return {x:x , y:y ,z:z}
+		}
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>
