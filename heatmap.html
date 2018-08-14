@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>examples</title>
+    <link rel="stylesheet" href="http://10.4.80.96:82/devplatform/arcgis/4.7/esri/css/main.css">
+    <link rel="stylesheet" href="http://10.4.80.96:82/devplatform/assets/css/map.css">
+</head>
+<body>
+<div id="viewDiv"></div>
+<script src="http://10.4.80.96:82/devplatform/config/dojoConfig.js"></script>
+<script src="http://10.4.80.96:82/devplatform/arcgis/4.7/init.js"></script>
+<script>
+    require([
+        "esri/Map",
+        "esri/Basemap",
+        "esri/views/SceneView",
+        "esri/layers/TileLayer",
+        "esri/geometry/Point",
+        "esri/geometry/geometryEngine",
+        "esri/geometry/support/webMercatorUtils",
+        "esri/tasks/QueryTask",
+        "esri/tasks/support/Query",
+        "esri/views/3d/externalRenderers",
+        "flygl/gl",
+        "dojo/domReady!"
+    ], function(Map,Basemap,SceneView,TileLayer,Point,geometryEngine,webMercatorUtils,QueryTask,Query,externalRenderers,FlyGL){
+        var layerUrl = "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer" ;
+        var dataUrl = "http://sk-ags106.iflytek-skdemo.com/zhcs/rest/services/Hosted/NYC_Felony_2015_0_CopyFeatur/FeatureServer/0" ;
+
+        var customBasemap = new Basemap({ baseLayers: [new TileLayer({url: layerUrl})]});
+        var map = new Map({basemap:customBasemap});
+        view = new SceneView({
+            container: "viewDiv",
+            map: map,
+            scale: 6379.553103856984,
+            camera:{
+                position: {
+                    x: 13049260.99995112,
+                    y: 3736188.6747101652,
+                    z: 941.0604542018846,
+                    spatialReference: {
+                        wkid: 3857
+                    }
+                },
+                heading: 359.06005135951614,
+                tilt: 71.92164977702988
+            }
+        });
+        view.ui.remove("attribution");
+        view.ui.move([ "compass", "navigation-toggle", "zoom" ], "bottom-right");
+
+        var calculator = new FlyGL.Calculator({
+            idField: "doitt_id",
+            dateField:"occurrence_date"
+        });
+        var location = new Point({
+            longitude:117.22272,
+            latitude:31.82145
+        });
+        var buffer = geometryEngine.geodesicBuffer(location, 500, "meters");
+        buffer = webMercatorUtils.geographicToWebMercator(buffer);
+        var query = new Query({
+            geometry: buffer,
+            returnGeometry: true,
+            orderByFields : ["occurrence_date"],
+            outFields : ["*"]
+        });
+        var queryTask = new QueryTask({
+            url: dataUrl
+        });
+        queryTask.execute(query).then(function(res){
+            var  features = res.features;
+            features = calculator.processData({
+                extent: buffer.extent,
+                features: features
+            });
+            var renderer = new FlyGL.overlay.HeatMap(view,{
+                height: 400,
+                color1: [0, 0, 255, 1],
+                color2: [255, 0, 0, 1],
+                vertices: features.vertices,
+                indices: features.indices,
+                data: features.data
+            });
+            externalRenderers.add(view, renderer);
+        });
+    });
+</script>
+</body>
+</html>

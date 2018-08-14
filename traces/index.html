@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>GPS Traces</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.8/esri/css/main.css">
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+<div id="viewDiv"></div>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="https://js.arcgis.com/4.8/"></script>
+<script>
+    require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/GraphicsLayer",
+        "esri/Graphic",
+        "dojo/domReady!"
+    ], function(Map, SceneView, GraphicsLayer, Graphic) {
+        var map , view , socket,gpsLayer, gpsData={} ;
+        // 初始化地图
+        initMap();
+        // 初始化Socket
+        initSocket();
+        // 初始化GPS图层
+        initGPSLayer();
+
+        function initMap(){
+            map = new Map({
+                basemap: "streets",
+                ground: "world-elevation"
+            });
+            view = new SceneView({
+                container: "viewDiv",
+                map: map,
+                scale: 200000,
+                center: [118.35, 31.4]
+            });
+        }
+
+        function initSocket(){
+            socket = io('http://localhost');
+            socket.on('gps-traces', function (data) {
+                data.forEach(function (point){
+                    if(gpsData.hasOwnProperty(point.id)){
+                        gpsData[point.id].traces.push([point.longitude,point.latitude]);
+                    }else{
+                        gpsData[point.id] = {
+                            traces: [[point.longitude,point.latitude]]
+                        };
+                    }
+                });
+                updateGPSData(gpsData);
+            });
+        }
+
+        function initGPSLayer(){
+            gpsLayer = new GraphicsLayer({id:"gpsTracesLayer"});
+            map.add(gpsLayer);
+        }
+
+        function updateGPSData(gpsData){
+            gpsLayer.removeAll();
+            for(var key in gpsData){
+                var gpsPoint = gpsData[key] ;
+                var traces = gpsPoint.traces;
+                var tracesGraphic = new Graphic({
+                    geometry: {
+                        type: "polyline",
+                        paths: traces
+                    },
+                    symbol:{ type: "simple-line", color: [226, 119, 40], width: 2  }
+                }) ;
+                var pointGraphic = new Graphic({
+                    geometry:{
+                        type: "point",
+                        longitude:traces[traces.length-1][0],
+                        latitude: traces[traces.length-1][1]
+                    },
+                    symbol:{ type: "simple-marker", color: [255, 255, 0]}
+                }) ;
+                gpsLayer.addMany([tracesGraphic,pointGraphic]);
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

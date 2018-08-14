@@ -28,11 +28,12 @@
 	<script src="http://localhost/arcgis_js_api/library/4.7/init.js"></script> 
     <script>
         require([
+        "esri/PopupTemplate",
         "esri/tasks/Locator",
         "esri/Map",
         "esri/views/MapView",
         "dojo/domReady!"
-        ],function(Locator,Map, MapView){
+        ],function(PopupTemplate, Locator, Map, MapView){
             var locatorTask = new Locator({
                 url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
             });
