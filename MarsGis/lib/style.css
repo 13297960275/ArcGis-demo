@@ -1,0 +1,26 @@
+/* 2018-12-4 22:53:07 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */
+#centerDiv,
+body,
+html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif, "宋体";
+  font-size: 13px
+}
+
+.infoview {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 4px;
+  color: #000;
+  background: rgba(255, 255, 255, .75);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, .4);
+  z-index: 9999
+}

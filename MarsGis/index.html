@@ -1,0 +1,97 @@
+<html style="height: 100%;">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,minimum-scale=1,maximum-scale=1">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="x5-fullscreen" content="true">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <title>MarsGIS for Leaflet地图</title>
+  <!-- <script src="./lib/include-lib.js" libpath="./lib/" include="jquery,font-awesome,bootstrap,layer,haoutil,leaflet-mars,esri-leaflet,turf"></script> -->
+  <script type="text/javascript" src="./lib/noCopy.js?time=20190112"></script>
+  <script type="text/javascript" src="./lib/jquery.js?time=20190112"></script>
+  <link rel="stylesheet" href="./lib/font-awesome.css?time=20190112">
+  <link rel="stylesheet" href="./lib/bootstrap.css?time=20190112">
+  <script type="text/javascript" src="./lib/bootstrap.js?time=20190112"></script>
+  <link rel="stylesheet" href="./lib/layer.css?time=20190112">
+  <link rel="stylesheet" href="./lib/retina.css?time=20190112">
+  <script type="text/javascript" src="./lib/layer.js?time=20190112"></script>
+  <script type="text/javascript" src="./lib/haoutil.js?time=20190112"></script>
+  <link rel="stylesheet" href="./lib/loading.css?time=20190112">
+  <script type="text/javascript" src="./lib/loading.js?time=20190112"></script>
+  <link rel="stylesheet" href="./lib/leaflet.css?time=20190112">
+  <script type="text/javascript" src="./lib/leaflet.js?time=20190112"></script>
+  <script type="text/javascript" src="./lib/esri-leaflet.js?time=20190112"></script>
+  <script type="text/javascript" src="./lib/turf.js?time=20190112"></script>
+  <link href="./lib/style.css" rel="stylesheet">
+</head>
+
+<body style="height: 100%;">
+  <div id="map" class="map leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom"
+    tabindex="0"></div>
+  <div class="infoview"><input type="button" class="btn btn-primary" value="文字" onclick="workDraw.startDraw(&quot;text&quot;)">
+    <input type="button" class="btn btn-primary" value="点" onclick="workDraw.startDraw(&quot;marker&quot;)"> <input
+      type="button" class="btn btn-primary" value="自由线" onclick="workDraw.startDraw(&quot;polylinefree&quot;)"> <input
+      type="button" class="btn btn-primary" value="线" onclick="workDraw.startDraw(&quot;polyline&quot;)"> <input type="button"
+      class="btn btn-primary" value="多边形" onclick="workDraw.startDraw(&quot;polygon&quot;)"> <input type="button" class="btn btn-primary"
+      value="矩形" onclick="workDraw.startDraw(&quot;rectangle&quot;)"> <input type="button" class="btn btn-primary"
+      value="圆" onclick="workDraw.startDraw(&quot;circle&quot;)"> &nbsp;&nbsp;&nbsp;&nbsp; <input type="button" class="btn btn-primary"
+      value="清除" onclick="workDraw.clearDraw()"> <input id="btnSave" type="button" class="btn btn-primary" value="保存">
+    <input id="btnImpFile" type="button" class="btn btn-primary" value="导入"> <input id="btn_file" type="file" accept=".json"
+      style="display:none"></div>
+  <script>
+    var map, workDraw;
+
+    function initMap() {
+      var e = haoutil.system.getRequestByName("config", "config/gcj.json");
+      L.mars.createMap({
+        id: "map",
+        url: e,
+        success: function (e, n) {
+          map = e, initWork()
+        }
+      }), $("#btnSave").click(function () {
+        var e = workDraw.toJson();
+        "" != e ? haoutil.file.downloadFile("我的标注.json", e) : layer.msg("当前没有标注任何数据，无需保存！")
+      }), $("#btn_file").change(function (e) {
+        var n = this.files[0],
+          t = n.name;
+        if ("json" != t.substring(t.lastIndexOf(".") + 1, t.length).toLowerCase()) return layer.msg(
+          "文件类型不合法,请选择json格式标注文件！"), void clearSelectFile();
+        if (window.FileReader) {
+          var i = new FileReader;
+          i.readAsText(n, "UTF-8"), i.onloadend = function (e) {
+            var n = this.result;
+            n = turf.simplify(JSON.parse(n), {
+              tolerance: 1e-4,
+              highQuality: !1
+            }), workDraw.jsonToLayer(n, !0, !0), clearSelectFile()
+          }
+        }
+      }), $("#btnImpFile").click(function () {
+        $("#btn_file").click()
+      })
+    }
+
+    function clearSelectFile() {
+      window.addEventListener ? document.getElementById("btn_file").value = "" : document.getElementById("btn_file").outerHTML +=
+        ""
+    }
+
+    function initWork() {
+      workDraw = new L.mars.Draw({
+        map: map,
+        hasDel: !0,
+        onCreate: function (e) {}
+      })
+    }
+    $(document).ready(function () {
+      initMap()
+    })
+  </script>
+</body>
+
+</html>
