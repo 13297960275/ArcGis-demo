@@ -1,4 +1,4 @@
-/* 2018-10-19 21:52:19 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */ ! function (l, e) {
+!function (l, e) {
   "use strict";
   var c, d, t, i, n = l.layui && layui.define,
     u = {

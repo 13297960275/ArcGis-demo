@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="./WKTUtil.js"></script>
+  <script src="./mapTran.js"></script>
+  <script>
+    var wkt = {
+      pt: 'POINT(6 10)',
+      ls: 'LINESTRING(3 4,10 50,20 25)',
+      pg: 'POLYGON((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))',
+      mpt: 'MULTIPOINT(3.5 5.6, 4.8 10.5)',
+      mls: 'MULTILINESTRING((3 4,10 50,20 25),(-5 -8,-10 -8,-15 -4))',
+      mpg: 'MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))',
+    }
+
+    var datas = {}
+    var wktUtil = new WKTUtil();
+    for (var key in wkt) {
+      datas[key] = wktUtil.read(wkt[key])
+      console.log(key, datas[key])
+    }
+  </script>
+</body>
+
+</html>

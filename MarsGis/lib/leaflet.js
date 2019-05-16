@@ -1,4 +1,4 @@
-/* 2019-1-11 21:25:23 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */ ! function (t, e) {
+! function (t, e) {
   "object" == typeof exports && "object" == typeof module ? module.exports = e(require("jQuery"), require("mapv")) : "function" == typeof define && define.amd ? define(["jQuery", "mapv"], e) : "object" == typeof exports ? exports.L = e(require("jQuery"), require("mapv")) : t.L = e(t.jQuery, t.mapv)
 }("undefined" != typeof self ? self : this, function (__WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_128__) {
   return function (i) {
@@ -9813,10 +9813,10 @@
       x = a(i(43)),
       k = i(134),
       E = {
-        name: "MarsGIS for Leaflet二维地图框架",
-        version: "1.5.1",
-        author: "木遥（QQ 516584683，微信 marsgis）",
-        website: "http://leaflet.marsgis.cn"
+        name: "",
+        version: "",
+        author: "",
+        website: ""
       };
     E.createMap = r.createMap,
       E.layer = l,
@@ -9840,9 +9840,9 @@
       E.Layer.Terminator = b.Terminator;
     var C = x;
     C.BaseWidget = k.BaseWidget,
-      o.default.mars = E,
+      o.default.la = E,
       o.default.widget = C,
-      console.log("当前Leaflet版本：" + o.default.version + " ， MarsGIS版本：" + E.version),
+      // console.log("当前Leaflet版本：" + o.default.version + " ， 版本：" + E.version),
       t.exports = o.default
   }, function (t, e) {}, function (t, e) {}, function (t, e, i) {
     "use strict";
@@ -14753,28 +14753,28 @@
     function createMapByData(opt, configdata, jsondata) {
       if (null != configdata) {
         if (!configdata.hasOwnProperty("copyright") || configdata.copyright)
-          try {
-            eval(function (t, e, i, a, n, o) {
-              if (n = function (t) {
-                  return t.toString(28)
-                },
-                !"".replace(/^/, String)) {
-                for (; i--;)
-                  o[n(i)] = a[i] || n(i);
-                a = [function (t) {
-                    return o[t]
-                  }],
-                  n = function () {
-                    return "\\w+"
-                  },
-                  i = 1
-              }
-              for (; i--;)
-                a[i] && (t = t.replace(new RegExp("\\b" + n(i) + "\\b", "g"), a[i]));
-              return t
-            }('1(f(){2.3("\\4\\5\\6\\7\\8\\9 a b\\d\\e\\0\\g %c \\h\\i\\j\\k\\l://m.n.o","p:q")},r);', 0, 28, "u5b9e|setTimeout|console|log|u5f53|u524d|u5730|u56fe|u4f7f|u7528MarsGIS|for|Leaflet||u6846|u67b6|function|u73b0|u5b98|u65b9|u7f51|u7ad9|uff1ahttp|leaflet|marsgis|cn|color|red|6E4".split("|"), 0, {}))
-          } catch (t) {}
-        var center;
+          // try {
+          //   eval(function (t, e, i, a, n, o) {
+          //     if (n = function (t) {
+          //         return t.toString(28)
+          //       },
+          //       !"".replace(/^/, String)) {
+          //       for (; i--;)
+          //         o[n(i)] = a[i] || n(i);
+          //       a = [function (t) {
+          //           return o[t]
+          //         }],
+          //         n = function () {
+          //           return "\\w+"
+          //         },
+          //         i = 1
+          //     }
+          //     for (; i--;)
+          //       a[i] && (t = t.replace(new RegExp("\\b" + n(i) + "\\b", "g"), a[i]));
+          //     return t
+          //   }('1(f(){2.3("\\4\\5\\6\\7\\8\\9 a b\\d\\e\\0\\g %c \\h\\i\\j\\k\\l://m.n.o","p:q")},r);', 0, 28, "u5b9e|setTimeout|console|log|u5f53|u524d|u5730|u56fe|u4f7f|u7528MarsGIS|for|Leaflet||u6846|u67b6|function|u73b0|u5b98|u65b9|u7f51|u7ad9|uff1ahttp|leaflet|marsgis|cn|color|red|6E4".split("|"), 0, {}))
+          // } catch (t) {}
+          var center;
         if (configdata.centerAutoLevel = configdata.centerAutoLevel || 15,
           configdata.extent) {
           var _x = (configdata.extent.xmin + configdata.extent.xmax) / 2,
@@ -19175,6 +19175,7 @@
             this.control[e]._enabled && this.control[e]._finishShape && this.control[e]._finishShape()
         },
         _layerDraw_clickHndler: function (t) {
+          console.log(t, this)
           t.layer != this.currEditFeature && this.stopEditing(),
             this.startEditing(t.layer),
             u.default.DomEvent.stopPropagation(t)
@@ -19265,6 +19266,7 @@
             type: "FeatureCollection",
             features: i
           };
+          console.log(t ? h : JSON.stringify(h))
           return t ? h : JSON.stringify(h)
         },
         jsonToLayer: function (t, e, i) {

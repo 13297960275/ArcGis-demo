@@ -9,27 +9,26 @@
   <meta name="format-detection" content="telephone=no">
   <meta name="x5-fullscreen" content="true">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-  <title>MarsGIS for Leaflet地图</title>
-  <!-- <script src="./lib/include-lib.js" libpath="./lib/" include="jquery,font-awesome,bootstrap,layer,haoutil,leaflet-mars,esri-leaflet,turf"></script> -->
-  <script type="text/javascript" src="./lib/noCopy.js?time=20190112"></script>
-  <script type="text/javascript" src="./lib/jquery.js?time=20190112"></script>
-  <link rel="stylesheet" href="./lib/font-awesome.css?time=20190112">
-  <link rel="stylesheet" href="./lib/bootstrap.css?time=20190112">
-  <script type="text/javascript" src="./lib/bootstrap.js?time=20190112"></script>
-  <link rel="stylesheet" href="./lib/layer.css?time=20190112">
-  <link rel="stylesheet" href="./lib/retina.css?time=20190112">
-  <script type="text/javascript" src="./lib/layer.js?time=20190112"></script>
-  <script type="text/javascript" src="./lib/haoutil.js?time=20190112"></script>
-  <link rel="stylesheet" href="./lib/loading.css?time=20190112">
-  <script type="text/javascript" src="./lib/loading.js?time=20190112"></script>
-  <link rel="stylesheet" href="./lib/leaflet.css?time=20190112">
-  <script type="text/javascript" src="./lib/leaflet.js?time=20190112"></script>
-  <script type="text/javascript" src="./lib/esri-leaflet.js?time=20190112"></script>
-  <script type="text/javascript" src="./lib/turf.js?time=20190112"></script>
+  <title>Leaflet集合</title>
+  <script type="text/javascript" src="./lib/jquery.js"></script>
+  <link rel="stylesheet" href="./lib/font-awesome.css">
+  <link rel="stylesheet" href="./lib/bootstrap.css">
+  <script type="text/javascript" src="./lib/bootstrap.js"></script>
+  <link rel="stylesheet" href="./lib/layer.css">
+  <link rel="stylesheet" href="./lib/retina.css">
+  <script type="text/javascript" src="./lib/layer.js"></script>
+  <script type="text/javascript" src="./lib/haoutil.js"></script>
+  <link rel="stylesheet" href="./lib/loading.css">
+  <script type="text/javascript" src="./lib/loading.js"></script>
+  <link rel="stylesheet" href="./lib/leaflet.css">
+  <script type="text/javascript" src="./lib/leaflet.js"></script>
+  <script type="text/javascript" src="./lib/esri-leaflet.js"></script>
+  <script type="text/javascript" src="./lib/turf.js"></script>
   <link href="./lib/style.css" rel="stylesheet">
 </head>
 
 <body style="height: 100%;">
+  <a href="./draw.html">编辑</a>
   <div id="map" class="map leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom"
     tabindex="0"></div>
   <div class="infoview"><input type="button" class="btn btn-primary" value="文字" onclick="workDraw.startDraw(&quot;text&quot;)">
@@ -47,7 +46,7 @@
 
     function initMap() {
       var e = haoutil.system.getRequestByName("config", "config/gcj.json");
-      L.mars.createMap({
+      L.la.createMap({
         id: "map",
         url: e,
         success: function (e, n) {
@@ -82,7 +81,7 @@
     }
 
     function initWork() {
-      workDraw = new L.mars.Draw({
+      workDraw = new L.la.Draw({
         map: map,
         hasDel: !0,
         onCreate: function (e) {}

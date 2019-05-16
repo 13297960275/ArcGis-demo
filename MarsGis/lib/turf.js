@@ -1,4 +1,4 @@
-/* 2018-4-25 16:00:32 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */ ! function (t, e) {
+!function (t, e) {
   "object" == typeof exports && "undefined" != typeof module ? e(exports) : "function" == typeof define && define.amd ? define(["exports"], e) : e(t.turf = {})
 }(this, function (t) {
   "use strict";

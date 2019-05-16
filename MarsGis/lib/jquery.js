@@ -1,4 +1,4 @@
-/* 2017-10-19 11:14:19 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */ ! function (e, t) {
+!function (e, t) {
   "object" == typeof module && "object" == typeof module.exports ? module.exports = e.document ? t(e, !0) : function (e) {
       if (!e.document)
         throw new Error("jQuery requires a window with a document");

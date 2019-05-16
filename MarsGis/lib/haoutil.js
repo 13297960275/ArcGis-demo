@@ -1,4 +1,3 @@
-/* 2018-12-4 22:53:26 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */
 var haoutil = haoutil || {};
 haoutil.version = "2.3",
   haoutil.name = "木遥通用常用JS方法类库",

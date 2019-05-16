@@ -1,4 +1,3 @@
-/* 2018-3-10 12:34:16 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */
 if ("undefined" == typeof jQuery)
   throw new Error("Bootstrap's JavaScript requires jQuery");
 ! function (t) {

@@ -1,4 +1,3 @@
-/* 2018-1-2 08:19:04 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */
 haoutil.loading = function () {
   var n = "muyao-loading";
 

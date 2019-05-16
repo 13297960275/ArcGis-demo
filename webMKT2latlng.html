@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+  <title>webMercatorUtils</title>
+  <link rel="stylesheet" type="text/css"
+        href="https://js.arcgis.com/3.23/esri/css/esri.css"/>
+  <script src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://js.arcgis.com/3.23/init.js"></script>
+  <style>
+    html, body, #map {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <script>
+    var map;
+    require(["esri/map","dojo/on",
+      "esri/geometry/webMercatorUtils", "dojo/domReady!"],
+      function (Map, on, webMercatorUtils) {
+      map = new Map("map", {
+        zoom: 10,
+        maxZoom: 18,
+        // minZoom: 8,
+        center: [116.825233, 33.91],
+        // center: [120.313, 36.206],
+        logo: false
+      });
+
+      var geoqtiledUrl = "https://192.168.13.246/basemap/rest/services/HB_DLG/MapServer";
+
+      var geoqTiledLayer = new esri.layers.ArcGISTiledMapServiceLayer(geoqtiledUrl);
+
+
+      map.addLayer(geoqTiledLayer);
+
+      on(map, "click", function (event) {
+        console.log(event)
+        var value = webMercatorUtils.webMercatorToGeographic(event.mapPoint);
+        console.log(value);
+      })
+    });
+  </script>
+</head>
+
+<body>
+<div id="map"></div>
+</body>
+</html>

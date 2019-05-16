@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Home Extent</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html,
+    body,
+    #map {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+
+    #HomeButton {
+      position: absolute;
+      top: 95px;
+      left: 20px;
+      z-index: 50;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "esri/map",
+      "esri/dijit/HomeButton",
+      "esri/SpatialReference",
+      "esri/layers/GraphicsLayer",
+      "esri/geometry/Point",
+      "esri/geometry/Multipoint",
+      "esri/geometry/Polyline",
+      "esri/geometry/Polygon",
+      "dojo/domReady!"
+    ], function (
+      Map,
+      HomeButton,
+      SpatialReference,
+      GraphicsLayer,
+      Point,
+      Multipoint,
+      Polyline,
+      Polygon
+    ) {
+      var map = new Map("map", {
+        center: [-56.049, 38.485],
+        zoom: 3,
+        basemap: "streets"
+      });
+
+      var home = new HomeButton({
+        map: map
+      }, "HomeButton");
+      home.startup();
+
+      var point = new Point([-122.65, 45.53], new SpatialReference({
+        wkid: 4326
+      }));
+
+      var mpJson = {
+        "points": [
+          [-122.63, 45.51],
+          [-122.56, 45.51],
+          [-122.56, 45.55]
+        ],
+        "spatialReference": ({
+          " wkid": 4326
+        })
+      };
+      var multipoint = new Multipoint(mpJson);
+
+      var polylineJson = {
+        "paths": [
+          [
+            [-122.68, 45.53],
+            [-122.58, 45.55],
+            [-122.57, 45.58],
+            [-122.53, 45.6]
+          ]
+        ],
+        "spatialReference": {
+          "wkid": 4326
+        }
+      };
+
+      var polyline = new Polyline(polylineJson);
+
+      var polygonJson = {
+        "rings": [
+          [
+            [-122.63, 45.52],
+            [-122.57, 45.53],
+            [-122.52, 45.50],
+            [-122.49, 45.48],
+            [-122.64, 45.49],
+            [-122.63, 45.52],
+            [-122.63, 45.52]
+          ]
+        ],
+        "spatialReference": { "wkid": 4326 }
+      };
+      var polygon = new Polygon(polygonJson);
+
+      var graphicsLayer = new GraphicsLayer();
+      map.addLayer(graphicsLayer)
+
+
+    });
+
+    /* var map;
+
+    require([
+      "esri/InfoTemplate",
+      "esri/layers/FeatureLayer",
+      "esri/map",
+      "esri/tasks/query", "dojo/domReady!"
+    ], function (InfoTemplate, FeatureLayer, Map, Query) {
+
+      map = new Map("map", {
+        basemap: "topo",
+        center: [-122.45, 37.75], // longitude, latitude
+        zoom: 10
+      });
+
+      var infoTemplate = new InfoTemplate("Attributes", "${*}");
+
+      var countiesFeatureLayer = new FeatureLayer(
+        "http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/3", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          infoTemplate: infoTemplate,
+          outFields: ['*']
+        });
+      var highwaysFeatureLayer = new FeatureLayer(
+        "http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/1", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          infoTemplate: infoTemplate,
+          outFields: ['*']
+        });
+
+      map.on("load", function () {
+        map.addLayer(countiesFeatureLayer);
+        map.addLayer(highwaysFeatureLayer);
+
+        var query = new Query();
+        query.geometry = map.extent;
+        query.spatialRelationship = Query.SPATIAL_REL_ENVELOPEINTERSECTS;
+        query.returnGeometry = true;
+        query.outFields = ["*"];
+
+        countiesFeatureLayer.queryFeatures(query, function (featureSet) {
+          var polygon = featureSet.features[0].geometry;
+          // populate the Geometry cache by calling getExtent()
+          var polygonExtent = polygon.getExtent();
+          console.log("polygonExtent", polygonExtent);
+          console.log("polygon.cache._extent", polygon.cache._extent);
+
+          for (var i = 0; i < featureSet.features.length; i) {
+            var feature = featureSet.features[i];
+            console.log("Polygon geometry cache, %o", feature.geometry.cache);
+            feature.geometry.clearCache();
+            console.log("Polygon geometry clear cache, %o", feature.geometry.cache);
+            // Break out of the loop after the first result
+            break;
+          }
+        });
+
+        highwaysFeatureLayer.queryFeatures(query, function (featureSet) {
+          var line = featureSet.features[0].geometry;
+          // populate the Geometry cache by calling getExtent()
+          var lineExtent = line.getExtent();
+          console.log("lineExtent", lineExtent);
+          console.log("line.cache._extent", line.cache._extent);
+
+          for (var i = 0; i < featureSet.features.length; i) {
+            var feature = featureSet.features[i];
+            console.log("Line geometry cache, %o", feature.geometry.cache);
+            feature.geometry.clearCache();
+            console.log("Line geometry clear cache, %o", feature.geometry.cache);
+            // Break out of the loop after the first result
+            break;
+          }
+        });
+
+      });
+    }); */
+  </script>
+</head>
+
+<body>
+  <div id="map" class="map">
+    <div id="HomeButton"></div>
+  </div>
+</body>
+
+</html>

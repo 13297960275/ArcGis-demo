@@ -1,4 +1,4 @@
-/* 2018-3-9 18:28:28 | 版权所有 火星科技 http://marsgis.cn  【联系我们QQ：516584683，微信：marsgis】 */ ! function (t, e) {
+!function (t, e) {
   "object" == typeof exports && "undefined" != typeof module ? e(exports, require("leaflet")) : "function" == typeof define && define.amd ? define(["exports", "leaflet"], e) : e((t.L = t.L || {},
     t.L.esri = {}), t.L)
 }(this, function (t, p) {

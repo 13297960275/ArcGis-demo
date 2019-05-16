@@ -1,0 +1,149 @@
+<html style="height: 100%;">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,minimum-scale=1,maximum-scale=1">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="x5-fullscreen" content="true">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <title>Leaflet集合</title>
+  <script type="text/javascript" src="./lib/jquery.js"></script>
+  <link rel="stylesheet" href="./lib/font-awesome.css">
+  <link rel="stylesheet" href="./lib/bootstrap.css">
+  <script type="text/javascript" src="./lib/bootstrap.js"></script>
+  <link rel="stylesheet" href="./lib/layer.css">
+  <link rel="stylesheet" href="./lib/retina.css">
+  <script type="text/javascript" src="./lib/layer.js"></script>
+  <script type="text/javascript" src="./lib/haoutil.js"></script>
+  <link rel="stylesheet" href="./lib/loading.css">
+  <script type="text/javascript" src="./lib/loading.js"></script>
+  <link rel="stylesheet" href="./lib/leaflet.css">
+  <script type="text/javascript" src="./lib/leaflet.js"></script>
+  <script type="text/javascript" src="./lib/esri-leaflet.js"></script>
+  <script type="text/javascript" src="./lib/turf.js"></script>
+  <link href="./lib/style.css" rel="stylesheet">
+</head>
+
+<body style="height: 100%;">
+  <div id="map" class="map leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom"
+    tabindex="0" style="position: relative;">
+  </div>
+  <script>
+    var map, plotLayer;
+
+    function initMap() {
+      var t = haoutil.system.getRequestByName("config", "config/gcj.json");
+      L.la.createMap({
+        id: "map",
+        url: t,
+        success: function (t, o) {
+          map = t, initWork()
+        }
+      })
+    }
+
+    function initWork() {
+      plotLayer = new L.FeatureGroup, map.addLayer(plotLayer);
+      var t = new(L.Control.extend({
+        options: {
+          position: "topright",
+          innerHTML: "字",
+          title: "创建文本标记"
+        },
+        control: null,
+        onAdd: function (t) {
+          null == this.control && (this.control = new L.Draw.Text(t));
+          var o = L.DomUtil.create("div", "leaflet-control leaflet-bar"),
+            e = L.DomUtil.create("a", "", o);
+          return e.href = "#", e.title = this.options.title, e.innerHTML = this.options.innerHTML, L.DomEvent.on(
+            e, "click", L.DomEvent.stop).on(e, "click", this.clickItem, this), o
+        },
+        clickItem: function (t) {
+          this.control.enable()
+        },
+        cancel: function (t) {
+          this.control && this.control.disable()
+        }
+      }));
+      map.addControl(t);
+      var o = new(L.Control.extend({
+        options: {
+          position: "topright",
+          innerHTML: "线",
+          title: "创建自由线"
+        },
+        control: null,
+        onAdd: function (t) {
+          null == this.control && (this.control = new L.Draw.Polylinefree(t));
+          var o = L.DomUtil.create("div", "leaflet-control leaflet-bar"),
+            e = L.DomUtil.create("a", "", o);
+          return e.href = "#", e.title = this.options.title, e.innerHTML = this.options.innerHTML, L.DomEvent.on(
+            e, "click", L.DomEvent.stop).on(e, "click", this.clickItem, this), o
+        },
+        clickItem: function (t) {
+          this.control.enable()
+        },
+        cancel: function (t) {
+          this.control && this.control.disable()
+        }
+      }));
+      map.addControl(o);
+      var e = {
+          position: "topright",
+          draw: {
+            polyline: {
+              shapeOptions: {
+                color: "#0000ff",
+                weight: 3
+              }
+            },
+            polygon: {
+              allowIntersection: !0,
+              showArea: !0,
+              shapeOptions: {
+                color: "#0000ff",
+                weight: 2
+              }
+            },
+            rectangle: {
+              shapeOptions: {
+                color: "#0000ff",
+                weight: 2
+              }
+            },
+            circle: {
+              shapeOptions: {
+                color: "#0000ff",
+                weight: 2
+              }
+            }
+          },
+          edit: {
+            featureGroup: plotLayer,
+            remove: !0
+          }
+        },
+        n = new L.Control.Draw(e);
+      map.addControl(n), map.on(L.Draw.Event.CREATED, draw_createdHandler)
+    }
+
+    function draw_createdHandler(t) {
+      console.log(t)
+      t.layerType;
+      var o = t.layer;
+      plotLayer.addLayer(o)
+    }
+
+    function clearDraw() {
+      plotLayer.clearLayers()
+    }
+    $(document).ready(function () {
+      initMap()
+    })
+  </script>
+</body>
+
+</html>
