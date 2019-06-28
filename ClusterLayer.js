@@ -55,7 +55,7 @@ define([
       this._showSingles = options.hasOwnProperty("showSingles") ? options.showSingles : true;
       // symbol for single graphics
       var SMS = SimpleMarkerSymbol;
-      this._singleSym = options.singleSymbol || new SMS("circle", 6, null, new Color("#888"));
+      this._singleSym = options.singleSymbol || new SMS("circle", 26, null, new Color("#888"));
       this._singleTemplate = options.singleTemplate || new PopupTemplate({
         "title": "",
         "description": "{*}"

@@ -13,6 +13,7 @@ function WktToPoint(wkt, spatialreference) {
     spatialReference: spatialreference
   }
   var point = new esri.geometry.Point(json);
+  // console.log(point)
   return point;
 }
 
@@ -25,12 +26,12 @@ function WktToPoint(wkt, spatialreference) {
 function WktToMultiPoint(wkt, spatialreference) {
   var wktUtil = new WKTUtil();
   var pt = wktUtil.read(wkt);
-  console.log('mpt', pt)
   var mpJson = {
-    "points": pt,
+    points: pt,
     spatialReference: spatialreference
   };
   var multipoint = new esri.geometry.Multipoint(mpJson);
+  // console.log(multipoint)
   return multipoint;
 }
 
@@ -43,12 +44,12 @@ function WktToMultiPoint(wkt, spatialreference) {
 function WktToPolyline(wkt, spatialreference) {
   var wktUtil = new WKTUtil();
   var points = wktUtil.read(wkt);
-  console.log('mpl', points)
   var json = {
     paths: points,
     spatialReference: spatialreference
   }
   var polyline = new esri.geometry.Polyline(json);
+  // console.log(polyline)
   return polyline;
 }
 /**
@@ -60,19 +61,18 @@ function WktToPolyline(wkt, spatialreference) {
 function WktToPolygon(wkt, spatialreference) {
   var wktUtil = new WKTUtil();
   var points = wktUtil.read(wkt);
-  console.log('mpg', points)
   var json = {
     rings: points,
     spatialReference: spatialreference
   }
   var polygon = new esri.geometry.Polygon(json);
+  // console.log(polygon)
   return polygon;
 }
 /**
  * @param geometry
  */
 function PointToWKT(geometry) {
-  console.log(geometry);
   return "POINT (" + geometry.x + " " + geometry.y + ")";
 }
 /**

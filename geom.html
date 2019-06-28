@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>demo07</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+</head>
+
+<body>
+  <div id="mapDiv" style="width:100%; height:600px; border:1px solid #000;"></div>
+  <button>添加点</button>
+  <button>添加多点</button>
+  <button>添加线</button>
+  <button>添加多线</button>
+  <button>添加面</button>
+  <button>添加多面</button>
+  <button>添加圆</button>
+  <button>清空</button>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "esri/map",
+      "esri/SpatialReference",
+      "esri/layers/GraphicsLayer",
+      "dojo/on",
+      "dojo/query",
+      "dojo/colors",
+      "esri/graphic",
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/geometry/Point",
+      "esri/geometry/Multipoint",
+      "esri/geometry/Polyline",
+      "esri/geometry/Polygon",
+      "esri/geometry/Circle",
+      "dojo/domReady!"
+    ], function (
+      Map,
+      SpatialReference,
+      GraphicsLayer,
+      on,
+      query,
+      Color,
+      Graphic,
+      SimpleMarkerSymbol,
+      SimpleLineSymbol,
+      SimpleFillSymbol,
+      Point,
+      Multipoint,
+      Polyline,
+      Polygon,
+      Circle) {
+      var map = new Map("mapDiv", {
+        logo: false,
+        center: [-122.65, 45.53],
+        zoom: 13,
+        basemap: "streets"
+      })
+      //创建客户端图层
+      var graphicsLayer = new GraphicsLayer();
+      //将客户端图层添加到地图中
+      map.addLayer(graphicsLayer);
+      //通过query查询到button对象
+      var btns = query("button");
+
+      on(btns, "click", function (event) {
+        //获得按钮的文本
+        var text = this.innerHTML;
+        // console.log(text);
+        //定义线符号
+        var lineSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255, 0, 0]), 3);
+        //定义点符号
+        var pSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20, lineSymbol, new Color([255, 0,
+          0
+        ]));
+        //定义面符号
+        var fill = SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, lineSymbol, new Color([255, 0, 0]));
+        //声明一个类型和图形
+        var geometry;
+        var graphic;
+        //根据文本定义相应的geometry
+        switch (text) {
+          case "添加点":
+            geometry = new Point({
+              "x": -122.65,
+              "y": 45.53,
+              "spatialReference": {
+                "wkid": 4326
+              }
+            });
+            graphic = new Graphic(geometry, pSymbol);
+            break;
+          case "添加多点":
+            var mpJson = {
+              "points": [
+                [-122.63, 45.51],
+                [-122.56, 45.51],
+                [-122.56, 45.55]
+              ],
+              "spatialReference": ({
+                "wkid": 4326
+              })
+            };
+            var geometry = new Multipoint(mpJson);
+            graphic = new Graphic(geometry, pSymbol);
+            break;
+          case "添加线":
+            //点的坐标对
+            var paths = [];
+            paths[0] = [
+              [-122.68, 45.53],
+              [-122.58, 45.55],
+              [-122.57, 45.58],
+              [-122.53, 45.6]
+            ];
+            geometry = new Polyline({
+              "paths": paths,
+              "spatialReference": {
+                "wkid": 4326
+              }
+            })
+            graphic = new Graphic(geometry, lineSymbol);
+            break;
+          case "添加多线":
+            //点的坐标对
+            var paths = [];
+            paths[0] = [
+              [-122.6826, 45.5372],
+              [-122.5826, 45.5572],
+              [-122.5726, 45.5872],
+              [-122.5326, 45.672]
+            ];
+            paths[1] = [
+              [-122.6897, 45.563],
+              [-122.5897, 45.565],
+              [-122.5797, 45.568],
+              [-122.5397, 45.66]
+            ];
+            geometry = new Polyline({
+              "paths": paths,
+              "spatialReference": {
+                "wkid": 4326
+              }
+            })
+            graphic = new Graphic(geometry, lineSymbol);
+            break;
+          case "添加面":
+            //点的坐标对
+            var ring = [];
+            ring[0] = [
+              [-122.63, 45.52],
+              [-122.57, 45.53],
+              [-122.52, 45.50],
+              [-122.49, 45.48],
+              [-122.64, 45.49],
+              [-122.63, 45.52],
+              [-122.63, 45.52]
+            ];
+            geometry = new Polygon({
+              "rings": ring,
+              "spatialReference": {
+                "wkid": 4326
+              }
+            });
+            graphic = new Graphic(geometry, fill);
+            break;
+          case "添加多面":
+            //点的坐标对
+            var ring = [];
+            ring[0] = [
+              [-122.163368, 45.152165],
+              [-122.257368, 45.253165],
+              [-122.352368, 45.350165],
+              [-122.449368, 45.448165],
+              [-122.564368, 45.549165],
+              [-122.463368, 45.452165],
+              [-122.363368, 45.352165]
+            ];
+            ring[1] = [
+              [-122.635, 45.529],
+              [-122.575, 45.539],
+              [-122.525, 45.509],
+              [-122.495, 45.489],
+              [-122.645, 45.499],
+              [-122.635, 45.529],
+              [-122.635, 45.529]
+            ];
+            geometry = new Polygon({
+              "rings": ring,
+              "spatialReference": {
+                "wkid": 4326
+              }
+            });
+            graphic = new Graphic(geometry, fill);
+            break;
+          case "添加圆":
+            //圆心
+            var p = new Point({
+              "x": -122.63,
+              "y": 45.52,
+              "spatialReference": {
+                "wkid": 4326
+              }
+            });
+            //半径
+            var r = 2000;
+            geometry = new Circle(p, {
+              "radius": r
+            });
+            graphic = new Graphic(geometry, fill);
+            break;
+          case "清空":
+            graphicsLayer.clear()
+            break;
+        }
+        //将图形添加到图层中
+        console.log(geometry)
+        // console.log(graphic)
+        graphic ? graphicsLayer.add(graphic) : '';
+      })
+    })
+  </script>
+</body>
+
+</html>

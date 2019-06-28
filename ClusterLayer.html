@@ -80,7 +80,7 @@
 
         var clusterLayer;
         var popupOptions = {
-          "markerSymbol": new SimpleMarkerSymbol("circle", 60, null, new Color([0, 0, 0, 0.25])),
+          "markerSymbol": new SimpleMarkerSymbol("circle", 14, null, new Color([0, 0, 0, 0.25])),
           "marginLeft": "20",
           "marginTop": "20"
         };
@@ -96,7 +96,7 @@
 
           // get the latest 1000 photos from instagram/laguna beach
           var photos = esriRequest({
-            url: "./data/gaj02.json",
+            url: "./data/rk.json",
             handleAs: "json",
           });
           console.log(new Date())
@@ -109,7 +109,7 @@
           var wgs = new SpatialReference({
             "wkid": 4326
           });
-          photoInfo.data = arrayUtils.map(resp, function (p) {
+          photoInfo.data = arrayUtils.map(resp.RECORDS, function (p) {
             // console.log(resp, p)
             var latlng = new Point(parseFloat(p.norm_x), parseFloat(p.norm_y), wgs);
             var webMercator = webMercatorUtils.geographicToWebMercator(latlng);
@@ -153,9 +153,10 @@
             "maxSingles": 12000,
             "resolution": map.extent.getWidth() / map.width,
             "singleColor": "#888",
-            "singleTemplate": popupTemplate
+            "singleTemplate": popupTemplate,
+            'singleSymbol': ''
           });
-          var defaultSym = new SimpleMarkerSymbol().setSize(64);
+          var defaultSym = new SimpleMarkerSymbol().setSize(14);
           var renderer = new ClassBreaksRenderer(defaultSym, "clusterCount");
 
           var picBaseUrl = "https://static.arcgis.com/images/Symbols/Shapes/";
